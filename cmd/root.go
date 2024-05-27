@@ -13,7 +13,11 @@ var rootCmd = &cobra.Command{
 	Short: "animate the sprites in terminal",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return model.Start(sprite.TestSprite)
+		frame, err := sprite.LoadPNG(args[0])
+		if err != nil {
+			return err
+		}
+		return model.Start(sprite.Sprite{frame})
 	},
 }
 

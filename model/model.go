@@ -37,7 +37,11 @@ func (m model) View() string {
 	s := fmt.Sprintln("press 'q' to exit")
 	for _, r := range m.s[0] {
 		for _, p := range r {
-			s += lipgloss.NewStyle().Foreground(lipgloss.Color(p.ToHexString())).Render("\u2588\u2588")
+			if p.IsTransparent() {
+				s += "  "
+			} else {
+				s += lipgloss.NewStyle().Foreground(lipgloss.Color(p.ToRGBHexString())).Render("\u2588\u2588")
+			}
 		}
 		s += "\n"
 	}
