@@ -28,8 +28,25 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
+		start, err := cmd.Flags().GetUint("start")
+		if err != nil {
+			return err
+		}
+		end, err := cmd.Flags().GetUint("end")
+		if err != nil {
+			return err
+		}
+		fps, err := cmd.Flags().GetInt("fps")
+		if err != nil {
+			return err
+		}
+		if fps < 0 {
+			fps = int(end) - int(start) + 1
+		}
+
+		// todo: parameter validation
 		s := sprite.NewSprite(frame, col, row)
-		return model.Start(s)
+		return model.Start(s, int(start), int(end), fps)
 	},
 }
 
@@ -38,4 +55,10 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func init() {
+	rootCmd.Flags().UintP("start", "s", 0, "animation start index")
+	rootCmd.Flags().UintP("end", "e", 0, "animation end index")
+	rootCmd.Flags().IntP("fps", "f", -1, "frame per second")
 }
