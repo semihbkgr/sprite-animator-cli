@@ -30,7 +30,7 @@ func tick(fps int) tea.Cmd {
 }
 
 func (m model) Init() tea.Cmd {
-	return tick(m.fps)
+	return tea.Batch(tick(m.fps), tea.SetWindowTitle("sprite animator cli"))
 }
 
 func (m model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
