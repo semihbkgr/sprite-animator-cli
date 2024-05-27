@@ -3,10 +3,18 @@ package model
 import (
 	"fmt"
 
+	"github.com/semihbkgr/sprite-animator-cli/sprite"
+
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type model struct {
+	s sprite.Sprite
+}
+
+func new(s sprite.Sprite) model {
+	return model{s: s}
 }
 
 func (m model) Init() tea.Cmd {
@@ -26,11 +34,18 @@ func (m model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	return fmt.Sprintln("press 'q' to exit")
+	s := fmt.Sprintln("press 'q' to exit")
+	for _, r := range m.s[0] {
+		for _, p := range r {
+			s += lipgloss.NewStyle().Foreground(lipgloss.Color(p.ToHexString())).Render("\u2588\u2588")
+		}
+		s += "\n"
+	}
+	return s
 }
 
-func Start() error {
-	m := model{}
+func Start(s sprite.Sprite) error {
+	m := new(s)
 	p := tea.NewProgram(m)
 	_, err := p.Run()
 	return err
