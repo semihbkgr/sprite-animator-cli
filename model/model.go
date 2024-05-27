@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/semihbkgr/sprite-animator-cli/sprite"
 
@@ -11,14 +12,23 @@ import (
 
 type model struct {
 	s sprite.Sprite
+	i int
 }
 
 func new(s sprite.Sprite) model {
-	return model{s: s}
+	return model{s: s, i: 0}
+}
+
+type AnimationTimer struct{}
+
+func tick() tea.Cmd {
+	return tea.Tick(time.Second, func(_ time.Time) tea.Msg {
+		return AnimationTimer{}
+	})
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return tick()
 }
 
 func (m model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
@@ -28,6 +38,12 @@ func (m model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "esc", "ctrl+c":
 			return m, tea.Quit
 		}
+	case AnimationTimer:
+		m.i++
+		if m.i == len(m.s) {
+			m.i = 0
+		}
+		return m, tick()
 	}
 
 	return m, nil
@@ -35,7 +51,8 @@ func (m model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	s := fmt.Sprintln("press 'q' to exit")
-	for _, r := range m.s[0] {
+	s += fmt.Sprintf("%d/%d\n", m.i, len(m.s))
+	for _, r := range m.s[m.i] {
 		for _, p := range r {
 			if p.IsTransparent() {
 				s += "  "

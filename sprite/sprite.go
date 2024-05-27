@@ -8,6 +8,30 @@ import (
 
 type Sprite []Frame
 
+func NewSprite(f Frame, col int, row int) Sprite {
+	frameHeight := len(f)
+	frameWidth := len(f[0])
+	smallFrameHeight := frameHeight / row
+	smallFrameWidth := frameWidth / col
+
+	sprite := make(Sprite, 0, col*row)
+
+	for r := 0; r < row; r++ {
+		for c := 0; c < col; c++ {
+			smallFrame := make(Frame, smallFrameHeight)
+			for y := 0; y < smallFrameHeight; y++ {
+				smallFrame[y] = make([]Pixel, smallFrameWidth)
+				for x := 0; x < smallFrameWidth; x++ {
+					smallFrame[y][x] = f[r*smallFrameHeight+y][c*smallFrameWidth+x]
+				}
+			}
+			sprite = append(sprite, smallFrame)
+		}
+	}
+
+	return sprite
+}
+
 type Frame [][]Pixel
 
 type Pixel [4]byte
